@@ -71,26 +71,6 @@ Model *scaleModel(Model *model, double scale){
 void grid(tgaImage *image, Model *model){
     int i, j; tgaColor white = tgaRGB(255, 255, 255);
     double maxCoord[3] = {0, 0, 0}; 
-    /*for(unsigned i = 0; i < model->nvert; i++) {
-        for(unsigned j = 0; j < 3; j++) {
-            Vec3 *tmp = &model->vertices[i];
-            double coordTmp = *tmp[j];
-            if(maxCoord[j] > coordTmp) {
-                maxCoord[j] = coordTmp; 
-            }
-        }
-    }*/
-
-    /*for(unsigned i = 0; i < model->nvert; i++) {
-        for(unsigned j = 0; j < 3; j++) {
-            double offsetCoord = fabs(maxCoord[j]);
-            (model->vertices[i])[j] = (model->vertices[i])[j] - offsetCoord;
-            if(j != 1) {
-                (model->vertices[i])[j] = (model->vertices[i])[j] + offsetCoord;
-            }
-        }
-    }*/
-
 
     for (i = 0; i < model->nface; ++i){
         int screenCoordinats[3][2];
