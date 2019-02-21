@@ -5,19 +5,21 @@
 #include "model.h"
 
 void line(tgaImage *image, int x0, int y0, int x1, int y1, tgaColor color);
+Model *scaleModel(Model *model, double scale);
 void grid(tgaImage *image, Model *model);
 void swap(int *a, int *b);
 
 int main(int argc, char *argv[]){
     int sysExit = 0;
     Model *model = loadFromObj(argv[1]);
+    scaleModel(model, strtod(argv[3], NULL));
     tgaImage *image = tgaNewImage(800, 800, RGB);
     grid(image, model);
     if (-1 == tgaSaveToFile(image, argv[2])) {
         perror("tgaSaveToFile");
         sysExit = -1;
     }
-    if (argc < 3){
+    if (argc < 4){
         perror("Need more parameters! ./... *.obj *.tga");
         sysExit = -1;
     }
@@ -57,10 +59,19 @@ void line(tgaImage *image, int x0, int y0, int x1, int y1, tgaColor color){
     }
 } 
 
+Model *scaleModel(Model *model, double scale){
+    for (unsigned i = 0; i < model->nvert; i++){
+        for(unsigned j = 0; j < 3; j++){
+            (model->vertices[i])[j] = (model->vertices[i])[j] * scale;
+        }
+    }
+    return model;
+}
+
 void grid(tgaImage *image, Model *model){
     int i, j; tgaColor white = tgaRGB(255, 255, 255);
     double maxCoord[3] = {0, 0, 0}; 
-    for(unsigned i = 0; i < model->nvert; i++) {
+    /*for(unsigned i = 0; i < model->nvert; i++) {
         for(unsigned j = 0; j < 3; j++) {
             Vec3 *tmp = &model->vertices[i];
             double coordTmp = *tmp[j];
@@ -68,9 +79,9 @@ void grid(tgaImage *image, Model *model){
                 maxCoord[j] = coordTmp; 
             }
         }
-    }
+    }*/
 
-    for(unsigned i = 0; i < model->nvert; i++) {
+    /*for(unsigned i = 0; i < model->nvert; i++) {
         for(unsigned j = 0; j < 3; j++) {
             double offsetCoord = fabs(maxCoord[j]);
             (model->vertices[i])[j] = (model->vertices[i])[j] - offsetCoord;
@@ -78,7 +89,7 @@ void grid(tgaImage *image, Model *model){
                 (model->vertices[i])[j] = (model->vertices[i])[j] + offsetCoord;
             }
         }
-    }
+    }*/
 
 
     for (i = 0; i < model->nface; ++i){
