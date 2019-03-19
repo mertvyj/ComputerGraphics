@@ -8,6 +8,7 @@ void line(tgaImage *image, int x0, int y0, int x1, int y1, tgaColor color);
 Model *scaleModel(Model *model, double scale);
 void grid(tgaImage *image, Model *model);
 void swap(int *a, int *b);
+void Triangle(tgaImage *image, int x0, int y0, int x1, int y1, int x2, int y2, tgaColor color);
 
 int main(int argc, char *argv[]){
     int sysExit = 0;
@@ -59,6 +60,67 @@ void line(tgaImage *image, int x0, int y0, int x1, int y1, tgaColor color){
     }
 } 
 
+void Triangle(tgaImage *image, int x0, int y0, int x1, int y1, int x2, int y2, tgaColor color) {
+    int xa, xb;
+
+    if(y0 > y2) {
+        swap(&y0, &y2);
+        swap(&x0, &x2);
+    }
+    if(y0 > y1) {
+        swap(&y0, &y1);
+        swap(&x0, &x1);
+    }
+    if(y1 > y2) {
+        swap(&y1, &y2);
+        swap(&x1, &x2);
+    }
+
+    if(y0 == y2) {
+        printf("It's line\n");
+        return;
+    }
+
+    for (int y = y0; y <= y1; y++){
+        if ((y1 - y0) != 0){
+        xa = x0 + (x1 - x0) * (y - y0) / (y1 - y0);
+        }else{
+            xa = x0;
+        }
+        if ((y2 - y0) != 0){
+            xb = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
+        }else{
+            xb = x0;
+        }
+        if (xa > xb){
+            swap(&xa, &xb);
+        }
+        for (int x = xa; x <= xb; x++){
+            tgaSetPixel(image, x, y, color);
+        }
+    }
+
+    for(int y = y1; y <= y2; y++){
+        if ((y1 - y0) != 0){
+            xa = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
+        }else{
+            xa = x0;
+        }
+        if ((y2 - y0) != 0){
+            xb = x1 + (x2 - x1) * (y - y1) / (y2 - y1 + 1);
+        }else{
+            xb = x0;
+        }
+        if (xa > xb){
+            swap(&xa, &xb);
+        }
+        for (int x = xa; x <= xb; x++){
+            tgaSetPixel(image, x, y, color);
+        }
+    }
+}
+
+
 Model *scaleModel(Model *model, double scale){
     for (unsigned i = 0; i < model->nvert; i++){
         for(unsigned j = 0; j < 3; j++){
@@ -70,7 +132,6 @@ Model *scaleModel(Model *model, double scale){
 
 void grid(tgaImage *image, Model *model){
     int i, j; tgaColor white = tgaRGB(255, 255, 255);
-    double maxCoord[3] = {0, 0, 0}; 
 
     for (i = 0; i < model->nface; ++i){
         int screenCoordinats[3][2];
@@ -79,11 +140,17 @@ void grid(tgaImage *image, Model *model){
             screenCoordinats[j][0] = ((*v)[0] + 1) * image->width / 2;
             screenCoordinats[j][1] = (1 - (*v)[1]) * image->height / 2;
         }
-        for (j = 0; j < 3; ++j){
+        /*for (j = 0; j < 3; ++j){
             line(image, screenCoordinats[j][0], screenCoordinats[j][1],
                  screenCoordinats[(j + 1) % 3][0], screenCoordinats[(j + 1) % 3][1], white);
-        }
+        }*/
+        int j = 0;
+        tgaColor randColor = tgaRGB(rand() % 255, rand() % 255, rand() % 255);
+        Triangle(image, screenCoordinats[j][0],screenCoordinats[j][1],
+            screenCoordinats[(j+1)%3][0], screenCoordinats[(j+1)%3][1],
+            screenCoordinats[(j+2)%3][0], screenCoordinats[(j+2)%3][1], randColor);
     }
+
 }
 
 void swap(int *a, int *b) {
